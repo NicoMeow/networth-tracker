@@ -1,27 +1,78 @@
 import React from 'react';
 
-var initialAssets = [
-  {"category": "Chequing", "amount": 2000},
-  {"category": "Savings for Taxes", "amount": 4000},
-  {"category": "Rainy Day Fund", "amount": 506}, 
-];
+//The initial data
+var initialData = {
+  "Assets": [
+    {"category": "Cash and Investments", 
+    "rows": [
+      {"name": "Chequing", "amount": 2000},
+      {"name": "Savings for Taxes", "amount": 4000},
+      {"name": "Rainy Day Fund", "amount": 506},
+      {"name": "Savings for Fun", "amount": 5000},
+      {"name": "Savings for Travel", "amount": 400},
+      {"name": "Savings for Personal Development", "amount": 200},
+      {"name": "Investment 1", "amount": 506},
+      {"name": "Investment 2", "amount": 5000},
+      {"name": "Other", "amount": null},
+    ]},
+    {"category": "Long Term Assets", 
+    "rows": [
+      {"name": "Primary Home", "amount": 455000},
+      {"name": "Second Home", "amount": 1564321}
+    ]}
+  ],
+  "Liabilities": [
+    {"category": "Short Term Liabilities", 
+    "rows": [
+      {"name": "Credit Card 1", "amount": 4342},
+      {"name": "Credit Card 2", "amount": 322},
+    ]},
+    {"category": "Long Term Debt", 
+    "rows": [
+      {"name": "Mortgage 1", "amount": 250999},
+      {"name": "Mortgage 2", "amount": 632634},
+      {"name": "Line of Credit", "amount": 2000},
+      {"name": "Investment Loan", "amount": 2000},
+      {"name": "Student Loan", "amount": null},
+      {"name": "Car Loan", "amount": null},
+    ]}
+  ]
+}
 
-//var initialAssetsTotal = initialAssets.reduce((entry.amount) => {});
+class Tracker extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      // Still need to decide how to initialize networth, do we have any calculations at all in the frontend.
+      // Should the initial sum be hard-coded?
+      netWorth: 50000,
+      assetTtl: 80000,
+      liabilityTtl: 30000
+    }
+  }
 
-var initialLiabilities = [
-  {"category": "Credit Card 1", "amount": 4342},
-  {"category": "Credit Card 2", "amount": 322},
-  {"category": "Credit Card 3", "amount": 322},
-];
-
-function Tracker() {
+  render() {
     return (
       <div className="Tracker">
-        <Table name="AssetTable" initialData={initialAssets} />
+        <div className="networth">
+          <h2>{"Net Worth: " + this.state.netWorth}</h2>       
+        </div>
         <br/>
-        <Table name="LiabilityTable" initialData={initialLiabilities} />
+        <h3>Assets</h3>
+        <Table name="AssetTable" CategoriesData={initialData.Assets} />
+        <h4>
+          {"Total Assets: " + this.state.assetTtl}
+        </h4>
+        <br/>
+        <h3>Liabilities</h3>
+        <Table name="LiabilityTable" CategoriesData={initialData.Liabilities} />
+        <h4>
+          {"Total Liabilities: " + this.state.liabilityTtl}
+        </h4>
       </div>
+
     );
+  }
 }
 
 // Create a component representing networth
@@ -34,21 +85,32 @@ class Row extends React.Component {
       color: "black",
       // The amount from user input
       inputAmount: null,
-    }
+    };
   }
 
-  clickedOn(){
+  componentDidUpdate(prevProps, prevState) {
+    fetch("https://reqres.in/api/products/3")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log("result is", result);
+        },
+        // important to handle errors here instead of a catch() block so we don't swallow exceptions from actual
+        // bugs in componenets
+        (error) => {
+          console.log("error is", error);
+        }
+      )
+  }
+
+  handleClick() {
     this.setState({color: "green"});
   }
 
-  clickedAway(){
-    // set the amount in state to the updated user input
-    this.setState({color: "black"});
-    //this is where the call to Java API occur. 
-  }
-
-  handleChange = (event) => {
-    this.setState({amount: event.target.value})
+  handleBlur(event) {
+    this.setState({color: "black", inputAmount: event.target.value}, () => {
+      console.log("state is", this.state);
+    });
   }
 
   render() {
@@ -57,13 +119,12 @@ class Row extends React.Component {
     }
     return (
       <tr>
-        <td>{this.props.category}</td>
+        <td>{this.props.name}</td>
         <td>
           <input
           defaultValue={this.props.amount}
-          onClick={() => this.clickedOn()}
-          onBlur={() => this.clickedAway()}
-          onChange={() => this.handleChange}
+          onClick={() => {this.handleClick()}}
+          onBlur={(event) => {this.handleBlur(event)}}
           style={mystyle}
           />
         </td>
@@ -74,21 +135,40 @@ class Row extends React.Component {
 
 // Create a component representing Assets table
 class Table extends React.Component {
-  render(){
-    const initialData = this.props.initialData;
-    const entries = initialData.map((entry, index) => {
+  // Each category forms a segment in table
+  renderCategorySeg(CategoryData) { 
+    const entriesData = CategoryData.rows;
+    const category = CategoryData.category;
+    const entries = entriesData.map((entry) => {
       return (
         <Row
-          key={initialData[index]["category"]}
-          category={initialData[index]["category"]}
-          amount={initialData[index]["amount"]}
+          key={entry["name"]}
+          name={entry["name"]}
+          amount={entry["amount"]}
         />        
       );
     });
+    return (
+      <React.Fragment key={category}>
+        <tr>
+          <th id={category}>
+            {category}
+          </th>
+        </tr>
+        {entries}
+      </React.Fragment>
+    );
+  }
+
+  render(){
+    const categoriesData = this.props.CategoriesData;
+    const categories = categoriesData.map((entry) => {
+      return this.renderCategorySeg(entry);
+    })
     return(
       <table>
         <tbody>
-          {entries}  
+          {categories}
         </tbody>
       </table>
     );

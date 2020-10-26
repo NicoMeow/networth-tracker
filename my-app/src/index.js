@@ -7,6 +7,7 @@ import Tracker from './Tracker';
 
 ReactDOM.render(
   <React.StrictMode>
+    <h1>Tracking Your Net Worth</h1>
     <Tracker />
   </React.StrictMode>,
   document.getElementById('root')
