@@ -2,7 +2,7 @@ import React from 'react';
 
 //The initial data
 var initialData = {
-  "Assets": [
+  "assets": [
     {"category": "Cash and Investments", 
     "rows": [
       {"name": "Chequing", "amount": 2000},
@@ -13,7 +13,7 @@ var initialData = {
       {"name": "Savings for Personal Development", "amount": 200},
       {"name": "Investment 1", "amount": 506},
       {"name": "Investment 2", "amount": 5000},
-      {"name": "Other", "amount": null},
+      {"name": "Other", "amount": 0},
     ]},
     {"category": "Long Term Assets", 
     "rows": [
@@ -21,7 +21,7 @@ var initialData = {
       {"name": "Second Home", "amount": 1564321}
     ]}
   ],
-  "Liabilities": [
+  "liabilities": [
     {"category": "Short Term Liabilities", 
     "rows": [
       {"name": "Credit Card 1", "amount": 4342},
@@ -33,8 +33,8 @@ var initialData = {
       {"name": "Mortgage 2", "amount": 632634},
       {"name": "Line of Credit", "amount": 2000},
       {"name": "Investment Loan", "amount": 2000},
-      {"name": "Student Loan", "amount": null},
-      {"name": "Car Loan", "amount": null},
+      {"name": "Student Loan", "amount": 0},
+      {"name": "Car Loan", "amount": 0},
     ]}
   ]
 }
@@ -43,12 +43,16 @@ class Tracker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // Still need to decide how to initialize networth, do we have any calculations at all in the frontend.
-      // Should the initial sum be hard-coded?
-      netWorth: 50000,
-      assetTtl: 80000,
-      liabilityTtl: 30000
+      //initialize all three calculated values to null
+      netWorth: null,
+      assetTtl: null,
+      liabilityTtl: null,
     }
+  }
+
+  componentDidMount() {
+    // TODO..
+    // in api 
   }
 
   render() {
@@ -59,13 +63,13 @@ class Tracker extends React.Component {
         </div>
         <br/>
         <h3>Assets</h3>
-        <Table name="AssetTable" CategoriesData={initialData.Assets} />
+        <Table name="AssetTable" CategoriesData={initialData.assets} />
         <h4>
           {"Total Assets: " + this.state.assetTtl}
         </h4>
         <br/>
         <h3>Liabilities</h3>
-        <Table name="LiabilityTable" CategoriesData={initialData.Liabilities} />
+        <Table name="LiabilityTable" CategoriesData={initialData.liabilities} />
         <h4>
           {"Total Liabilities: " + this.state.liabilityTtl}
         </h4>
@@ -88,20 +92,20 @@ class Row extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    fetch("https://reqres.in/api/products/3")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log("result is", result);
-        },
-        // important to handle errors here instead of a catch() block so we don't swallow exceptions from actual
-        // bugs in componenets
-        (error) => {
-          console.log("error is", error);
-        }
-      )
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   fetch("https://reqres.in/api/products/3")
+  //     .then(res => res.json())
+  //     .then(
+  //       (result) => {
+  //         console.log("result is", result);
+  //       },
+  //       // important to handle errors here instead of a catch() block so we don't swallow exceptions from actual
+  //       // bugs in componenets
+  //       (error) => {
+  //         console.log("error is", error);
+  //       }
+  //     )
+  // }
 
   handleClick() {
     this.setState({color: "green"});
