@@ -49,7 +49,8 @@ class Tracker extends React.Component {
       liabilityTtl: null,
       isLoaded: false,
       error: null,
-      data: initialData
+      assets: initialData.assets,
+      liabilities: initialData.liabilities
     }
   }
 
@@ -59,7 +60,7 @@ class Tracker extends React.Component {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(this.state.data)
+      body: JSON.stringify({"assets": this.state.assets, "liabilities": this.state.liabilities})
     })
       .then(res => res.json())
       .then(
@@ -78,7 +79,47 @@ class Tracker extends React.Component {
           })
         }
       )
+  }
 
+  handleBlur(names, event) {
+    //update the amount in the corresponding entry to user input and send a API request
+    const entryName = names.entryName;
+    const categoryName = names.categoryName;
+    const typeName = names.typeName;
+    const inputAmount = event.target.value;
+
+    //find the entry to modify
+    const categoryIndex = this.state[typeName].findIndex(x => x.category === categoryName);
+    //console.log(this.state[typeName][categoryIndex]);
+    const rowIndex = this.state[typeName][categoryIndex].rows.findIndex(y => y.name === entryName);
+    //console.log("row index is", rowIndex);
+    const copy  = this.state[typeName].slice();
+    copy[categoryIndex].rows[rowIndex].amount = inputAmount;
+    this.setState({[typeName]:copy});
+    fetch("http://localhost:8080/calculate-net-worth", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({"assets": this.state.assets, "liabilities": this.state.liabilities})
+    })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            assetTtl: result.assetAmount,
+            liabilityTtl: result.liabilityAmount,
+            netWorth: result.networth
+          })
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          })
+        }
+      )
   }
 
   render() {
@@ -89,18 +130,17 @@ class Tracker extends React.Component {
         </div>
         <br/>
         <h3>Assets</h3>
-        <Table name="AssetTable" CategoriesData={initialData.assets} />
+        <Table name="AssetTable" CategoriesData={this.state.assets} typeName="assets" onBlur={(names, event) => {this.handleBlur(names, event)}}/>
         <h4>
           {"Total Assets: " + this.state.assetTtl}
         </h4>
         <br/>
         <h3>Liabilities</h3>
-        <Table name="LiabilityTable" CategoriesData={initialData.liabilities} />
+        <Table name="LiabilityTable" CategoriesData={this.state.liabilities} typeName="liabilities" onBlur={(names, event) => {this.handleBlur(names, event)}}/>
         <h4>
           {"Total Liabilities: " + this.state.liabilityTtl}
         </h4>
       </div>
-
     );
   }
 }
@@ -116,24 +156,6 @@ class Row extends React.Component {
       // The amount from user input
       inputAmount: null,
     };
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.inputAmount !== prevState.inputAmount) {
-      
-    }
-    // fetch("https://reqres.in/api/products/3")
-    //   .then(res => res.json())
-    //   .then(
-    //     (result) => {
-    //       console.log("result is", result);
-    //     },
-    //     // important to handle errors here instead of a catch() block so we don't swallow exceptions from actual
-    //     // bugs in componenets
-    //     (error) => {
-    //       console.log("error is", error);
-    //     }
-    //   )
   }
 
   handleClick() {
@@ -157,7 +179,9 @@ class Row extends React.Component {
           <input
           defaultValue={this.props.amount}
           onClick={() => {this.handleClick()}}
-          onBlur={(event) => {this.handleBlur(event)}}
+          //onBlur={(event) => {this.handleBlur(event)}}
+          //Lift state up
+          onBlur = {this.props.onBlur}
           style={mystyle}
           />
         </td>
@@ -168,24 +192,53 @@ class Row extends React.Component {
 
 // Create a component representing Assets table
 class Table extends React.Component {
+  // constructor(props) {
+  //   super(props);
+  // }
+
+  // handleBlur(event) {
+  //   console.log("event.target is", event.target)
+  //   this.setState({
+  //     inputAmount: event.target.value
+  //   }, () => {console.log("current state is", this.state)})
+  // }
+  
   // Each category forms a segment in table
   renderCategorySeg(CategoryData) { 
     const entriesData = CategoryData.rows;
-    const category = CategoryData.category;
+    const categoryName = CategoryData.category;
+    const typeName = this.props.typeName;
+    //console.log("typeName is", typeName);
     const entries = entriesData.map((entry) => {
       return (
         <Row
           key={entry["name"]}
           name={entry["name"]}
           amount={entry["amount"]}
+          //onBlur = {(event) => {this.handleBlur(event); this.setState({changedEntryName: entry['name']})}}
+         
+          // onBlur = {(event) => {
+          //   this.setState({
+          //     inputAmount: event.target.value,
+          //     changedEntryName: entry["name"]
+          //   }, ()=>{console.log("updated state is", this.state)})
+          // }}
+          
+          //onBlur = {(event) => this.props.onBlur(event, categoryName)}
+          onBlur = {(event) => 
+            this.props.onBlur({
+              "entryName": entry["name"], 
+              "categoryName": categoryName,
+              "typeName": typeName
+            }, event)}
         />        
       );
     });
     return (
-      <React.Fragment key={category}>
+      <React.Fragment key={categoryName}>
         <tr>
-          <th id={category}>
-            {category}
+          <th id={categoryName}>
+            {categoryName}
           </th>
         </tr>
         {entries}

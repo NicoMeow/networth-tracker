@@ -29,14 +29,6 @@ public class NetWorthCalculatorService {
         return networth;
     }
 
-//    public void setAssetAmount(long assetAmount) {
-//        this.assetAmount = assetAmount;
-//    }
-//
-//    public void setLiabilityAmount(long liabilityAmount) {
-//        this.liabilityAmount = liabilityAmount;
-//    }
-
     private long calculateAsset(List<Category> assetCategories) {
         long amount = 0;
 
