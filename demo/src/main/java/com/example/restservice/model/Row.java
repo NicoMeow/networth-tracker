@@ -2,14 +2,14 @@ package com.example.restservice.model;
 
 public class Row {
     private String name;
-    private long amount;
+    private double amount;
 
-    public Row(String name, long amount){
+    public Row(String name, double amount){
         this.name = name;
         this.amount = amount;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

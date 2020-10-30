@@ -5,36 +5,36 @@ var initialData = {
   "assets": [
     {"category": "Cash and Investments", 
     "rows": [
-      {"name": "Chequing", "amount": 2000},
-      {"name": "Savings for Taxes", "amount": 4000},
-      {"name": "Rainy Day Fund", "amount": 506},
-      {"name": "Savings for Fun", "amount": 5000},
-      {"name": "Savings for Travel", "amount": 400},
-      {"name": "Savings for Personal Development", "amount": 200},
-      {"name": "Investment 1", "amount": 506},
-      {"name": "Investment 2", "amount": 5000},
-      {"name": "Other", "amount": 0}
+      {"name": "Chequing", "amount": 2000.00},
+      {"name": "Savings for Taxes", "amount": 4000.00},
+      {"name": "Rainy Day Fund", "amount": 506.00},
+      {"name": "Savings for Fun", "amount": 5000.00},
+      {"name": "Savings for Travel", "amount": 400.00},
+      {"name": "Savings for Personal Development", "amount": 200.00},
+      {"name": "Investment 1", "amount": 506.00},
+      {"name": "Investment 2", "amount": 5000.00},
+      {"name": "Other", "amount": 0.00}
     ]},
     {"category": "Long Term Assets", 
     "rows": [
-      {"name": "Primary Home", "amount": 455000},
-      {"name": "Second Home", "amount": 1564321}
+      {"name": "Primary Home", "amount": 455000.00},
+      {"name": "Second Home", "amount": 1564321.00}
     ]}
   ],
   "liabilities": [
     {"category": "Short Term Liabilities", 
     "rows": [
-      {"name": "Credit Card 1", "amount": 4342},
-      {"name": "Credit Card 2", "amount": 322}
+      {"name": "Credit Card 1", "amount": 4342.00},
+      {"name": "Credit Card 2", "amount": 322.00}
     ]},
     {"category": "Long Term Debt", 
     "rows": [
-      {"name": "Mortgage 1", "amount": 250999},
-      {"name": "Mortgage 2", "amount": 632634},
-      {"name": "Line of Credit", "amount": 2000},
-      {"name": "Investment Loan", "amount": 2000},
-      {"name": "Student Loan", "amount": 0},
-      {"name": "Car Loan", "amount": 0}
+      {"name": "Mortgage 1", "amount": 250999.00},
+      {"name": "Mortgage 2", "amount": 632634.00},
+      {"name": "Line of Credit", "amount": 2000.00},
+      {"name": "Investment Loan", "amount": 2000.00},
+      {"name": "Student Loan", "amount": 0.00},
+      {"name": "Car Loan", "amount": 0.00}
     ]}
   ]
 }
@@ -114,7 +114,7 @@ class Tracker extends React.Component {
           })
         },
         (error) => {
-          this.setState({
+          this.setState({  
             isLoaded: true,
             error
           })
@@ -152,21 +152,18 @@ class Row extends React.Component {
     super(props);
     this.state = {
       // Store current amount in state, initialize to JSON in memory then update to user input
-      color: "black",
       // The amount from user input
       inputAmount: null,
     };
   }
 
-  handleClick() {
-    this.setState({color: "green"});
-  }
-
-  handleBlur(event) {
-    this.setState({color: "black", inputAmount: event.target.value}, () => {
-      console.log("state is", this.state);
-    });
-  }
+  // handleInput(event) {
+  //   if(!((event.keyCode > 95 && event.keyCode < 106)
+  //   || (event.keyCode > 47 && event.keyCode < 58) 
+  //   || event.keyCode === 8)) {
+  //     return false;
+  //   }
+  // }
 
   render() {
     const mystyle = {
@@ -178,11 +175,14 @@ class Row extends React.Component {
         <td>
           <input
           defaultValue={this.props.amount}
-          onClick={() => {this.handleClick()}}
+          //onChange={(event) => {this.handleChange(event)}}
           //onBlur={(event) => {this.handleBlur(event)}}
           //Lift state up
           onBlur = {this.props.onBlur}
           style={mystyle}
+          type="number"
+          min="0"
+          step=".01"
           />
         </td>
       </tr>

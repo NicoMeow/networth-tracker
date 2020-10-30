@@ -7,9 +7,9 @@ import com.example.restservice.model.Row;
 import java.util.List;
 
 public class NetWorthCalculator {
-    private long assetAmount;
-    private long liabilityAmount;
-    private long networth;
+    private double assetAmount;
+    private double liabilityAmount;
+    private double networth;
 
     public NetWorthCalculator(Equity equity) {
         this.assetAmount = this.calculateAsset(equity.getAssets());
@@ -17,20 +17,20 @@ public class NetWorthCalculator {
         this.networth = this.calculateNetWorth(this.assetAmount, this.liabilityAmount);
     }
 
-    public long getAssetAmount() {
+    public double getAssetAmount() {
         return assetAmount;
     }
 
-    public long getLiabilityAmount() {
+    public double getLiabilityAmount() {
         return liabilityAmount;
     }
 
-    public long getNetworth() {
+    public double getNetworth() {
         return networth;
     }
 
-    private long calculateAsset(List<Category> assetCategories) {
-        long amount = 0;
+    private double calculateAsset(List<Category> assetCategories) {
+        double amount = 0;
 
         for (int i=0; i<assetCategories.size(); i++) {
             Category category = assetCategories.get(i);
@@ -43,8 +43,8 @@ public class NetWorthCalculator {
         return amount;
     }
 
-    private long calculateLiabilities(List<Category> liabilityCategories) {
-        long amount = 0;
+    private double calculateLiabilities(List<Category> liabilityCategories) {
+        double amount = 0;
 
         for (int i=0; i<liabilityCategories.size(); i++) {
             Category category = liabilityCategories.get(i);
@@ -57,7 +57,7 @@ public class NetWorthCalculator {
         return amount;
     }
 
-    private long calculateNetWorth(long assetAmount, long liabilityAmount) {
+    private double calculateNetWorth(double assetAmount, double liabilityAmount) {
         return assetAmount - liabilityAmount;
     }
 }
