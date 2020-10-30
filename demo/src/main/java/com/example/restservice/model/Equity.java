@@ -1,7 +1,5 @@
 package com.example.restservice.model;
 
-import com.example.restservice.model.Category;
-
 import java.util.List;
 
 public class Equity {

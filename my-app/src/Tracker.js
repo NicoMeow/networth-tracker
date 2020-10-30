@@ -191,18 +191,7 @@ class Row extends React.Component {
 }
 
 // Create a component representing Assets table
-class Table extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-
-  // handleBlur(event) {
-  //   console.log("event.target is", event.target)
-  //   this.setState({
-  //     inputAmount: event.target.value
-  //   }, () => {console.log("current state is", this.state)})
-  // }
-  
+class Table extends React.Component {  
   // Each category forms a segment in table
   renderCategorySeg(CategoryData) { 
     const entriesData = CategoryData.rows;

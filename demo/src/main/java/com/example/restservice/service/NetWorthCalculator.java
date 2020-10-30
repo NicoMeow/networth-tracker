@@ -6,12 +6,12 @@ import com.example.restservice.model.Row;
 
 import java.util.List;
 
-public class NetWorthCalculatorService {
+public class NetWorthCalculator {
     private long assetAmount;
     private long liabilityAmount;
     private long networth;
 
-    public NetWorthCalculatorService(Equity equity) {
+    public NetWorthCalculator(Equity equity) {
         this.assetAmount = this.calculateAsset(equity.getAssets());
         this.liabilityAmount = this.calculateLiabilities(equity.getLiabilities());
         this.networth = this.calculateNetWorth(this.assetAmount, this.liabilityAmount);
