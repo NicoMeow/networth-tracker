@@ -18,12 +18,11 @@ class Tracker extends React.Component {
  componentDidMount() {
    fetch("http://localhost:8080/calculate-net-worth", {
      //for mocking purpose, will change to POST
-     method: 'GET',
+     method: 'POST',
      headers: {
        'Content-Type': 'application/json'
      },
-     //for mocking purpose, will include body
-    //  body: this.initialDataJson
+     body: JSON.stringify(this.initialDataJson)
    })
      .then(res => res.json())
      .then(
@@ -43,26 +42,18 @@ class Tracker extends React.Component {
  }
 
 
-handleAmountChange(newAmount, oldAmount) {
+handleAmountChange(id, newAmount) {
     console.log("new amount is", newAmount);
-    console.log("old amount is", oldAmount);
+    console.log("id is", id);
      fetch("http://localhost:8080/update-net-worth", {
-    //  method: 'POST',
-     // mocking
-     method: 'GET',
+     method: 'POST',
      headers: {
        'Content-Type': 'application/json'
      },
-     // mocking, will include later
-  //    body: JSON.stringify({
-  //      "curAssetTtl": this.state.assets, 
-  //      "curLiabilityTtl": this.state.liabilities,
-  //     // These three have to be passed through form entry
-  //      "oldAmount": oldAmount,
-  //      "newAmount": e.target.value,
-  //      "entryType": entryType
-  //     })
-  //  })
+     body: JSON.stringify({
+      "id": id,
+      "amount": newAmount
+      })
     })
      .then(res => res.json())
      .then(

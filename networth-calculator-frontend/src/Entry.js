@@ -28,13 +28,12 @@ class Entry extends React.Component{
       console.log('here this points to', this);
       console.log('here event is', e);
       //should only recalculate when amount is changed
-      console.log("old amount type is ", typeof(this.state.oldAmount), "new type is ", typeof(e.target.valueAsNumber));
-
-      if (this.state.oldAmount !== e.target.valueAsNumber){
+      if (this.state.oldAmount !== e.target.value){
+        console.log('amount changed, oldAmount is ', this.state.oldAmount, "new value is ", e.target.valueAsNumber);
         this.setState({
-          curAmount: e.target.valueAsNumber
+          curAmount: e.target.value
         })
-        this.props.onAmountChange(e.target.valueAsNumber, this.state.oldAmount);
+        this.props.onAmountChange(this.props.entryObj.id, e.target.valueAsNumber);
       }
     }
 
